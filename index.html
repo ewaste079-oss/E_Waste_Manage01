@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block title %}Home - E-Waste Portal{% endblock %}
+
+{% block content %}
+<div class="text-center mt-4">
+  <h1 class="display-5">Welcome to the E-Waste Management System</h1>
+  <p class="lead">Track, manage, and analyze your electronic waste responsibly.</p>
+
+  {% if session.user_name %}
+    <p class="mt-3">Hello, <strong>{{ session.user_name }}</strong>!</p>
+    <div class="d-flex justify-content-center gap-3 mt-3 flex-wrap">
+      <a href="{{ url_for('analytics.show_analytics') }}" class="btn btn-primary">📊 View Analytics</a>
+      <a href="{{ url_for('dashboard') }}" class="btn btn-outline-success">🖥 Go to Dashboard</a>
+    </div>
+
+    <!-- 📸 Gallery Section -->
+    <!-- ♻️ Seamless Auto-Scrolling E-Waste Gallery -->
+<div class="container mt-5">
+  <h4 class="mb-3">♻️ E-Waste Awareness Gallery</h4>
+  <div class="scrolling-gallery">
+    <div class="gallery-track">
+      {% for i in range(2) %}  {# Duplicate loop for seamless scroll #}
+        <img src="{{ url_for('static', filename='images/ewaste1.jpg') }}" alt="E-waste 1">
+        <img src="{{ url_for('static', filename='images/ewaste2.jpg') }}" alt="E-waste 2">
+        <img src="{{ url_for('static', filename='images/ewaste3.jpg') }}" alt="E-waste 3">
+        <img src="{{ url_for('static', filename='images/ewaste4.jpg') }}" alt="E-waste 4">
+        <img src="{{ url_for('static', filename='images/ewaste5.jpg') }}" alt="E-waste 5">
+        <img src="{{ url_for('static', filename='images/ewaste6.jpg') }}" alt="E-waste 6">
+        <img src="{{ url_for('static', filename='images/ewaste7.jpg') }}" alt="E-waste 7">
+        <img src="{{ url_for('static', filename='images/ewaste8.jpg') }}" alt="E-waste 8">
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- 📘 Educational Sections -->
+    <div class="container mt-5 text-start">
+      <h3>🗑 What is E-Waste?</h3>
+      <p>E-Waste (Electronic Waste) refers to unwanted, non-working, or obsolete electronic products. This includes devices like computers, mobile phones, TVs, and household electronics.</p>
+      <p>E-waste (electronic waste) includes anything with plugs, cords and electronic components. Common sources of e-waste include televisions, computers, mobile phones and any type of home appliance, from air conditioners to children's toys.</p>
+
+      <h3>❓ Why Should We Manage E-Waste?</h3>
+      <p>E-Waste contains toxic materials like lead, mercury, and cadmium which can harm the environment and human health. Managing it responsibly prevents pollution and promotes sustainability.</p>
+      <ul>
+        <li>Environmental Protection</li>
+        <li>Health and Safety</li>
+        <li>Economic Benefits</li>
+      </ul>
+
+      <h3>⚠️ What are the Effects of Improper E-Waste Disposal?</h3>
+      <ul>
+        <li>Soil and water pollution due to leaking chemicals</li>
+        <li>Harmful impacts on human health (breathing issues, cancer, skin problems)</li>
+        <li>Loss of valuable raw materials like gold, silver, and copper</li>
+      </ul>
+
+      <h3>🌿 How Proper E-Waste Management Helps Our Surroundings</h3>
+      <ul>
+        <li>Keeps air, water, and soil clean and safe 🌍</li>
+        <li>Improves public health and reduces disease spread 🏥</li>
+        <li>Promotes recycling and resource conservation ♻️</li>
+        <li>Creates new job opportunities in the recycling industry 👷</li>
+        <li>Supports a cleaner and greener future for the next generation 🌱</li>
+      </ul>
+    </div>
+    
+    <!-- 📄 Article Section -->
+<div class="mt-5">
+  <h3>📄 Featured Articles on E-Waste</h3>
+
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">The Growing Threat of E-Waste in India</h5>
+      <p class="card-text">India is one of the top producers of e-waste in the world. This article explores the challenges, statistics, and solutions needed to tackle this growing crisis.</p>
+      <a href="https://www.researchgate.net/publication/259825260_Electronic_waste_-_An_emerging_threat_to_the_environment_of_urban_India" target="_blank" class="btn btn-outline-primary">Read More</a>
+    </div>
+  </div>
+
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">How to Recycle Electronics the Right Way</h5>
+      <p class="card-text">Recycling electronics properly can recover valuable metals and reduce environmental harm. Learn best practices and tips for safe disposal.</p>
+      <a href="https://www.ewaste1.com/how-are-electronics-recycled/" target="_blank" class="btn btn-outline-success">Read More</a>
+    </div>
+  </div>
+
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Green Tech: Future of Sustainable Electronics</h5>
+      <p class="card-text">Discover innovations in green electronics and how manufacturers are creating sustainable devices to reduce future e-waste generation.</p>
+      <a href="https://www.redlinegroup.com/insight-details/green-electronics-101-powering-a-cleaner-greener-future" target="_blank" class="btn btn-outline-secondary">Read More</a>
+    </div>
+  </div>
+</div>
+
+
+  {% else %}
+    <div class="mt-4">
+      <a href="{{ url_for('auth.login') }}" class="btn btn-success animated-btn">🔐 Login</a>
+      <a href="{{ url_for('auth.register') }}" class="btn btn-outline-primary animated-btn ms-2">📝 Register</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>🔍 Predict E-Waste Info</h2>
+<form method="POST">
+
+  <!-- Brand Name (Dropdown) -->
+  <div class="form-group">
+    <label>Brand Name</label>
+    <select name="brand_name" class="form-control" required>
+      <!-- Category 1 -->
+      <optgroup label="Cat1 - Large Household Appliances">
+        <option value="LG">LG</option>
+        <option value="Samsung">Samsung</option>
+        <option value="Whirlpool">Whirlpool</option>
+        <option value="Other">Other</option>
+      </optgroup>
+
+      <!-- Category 2 -->
+      <optgroup label="Cat2 - Small Household Appliances">
+        <option value="Philips">Philips</option>
+        <option value="Morphy_Richards">Morphy Richards</option>
+        <option value="Bajaj">Bajaj</option>
+        <option value="Other">Other</option>
+      </optgroup>
+
+      <!-- Category 3 -->
+      <optgroup label="Cat3 - IT and Telecommunication Equipment">
+        <option value="Dell">Dell</option>
+        <option value="HP">HP</option>
+        <option value="Apple">Apple</option>
+        <option value="Lenovo">Lenovo</option>
+        <option value="Samsung">Samsung</option>
+        <option value="Other">Other</option>
+      </optgroup>
+
+      <!-- Category 4 -->
+      <optgroup label="Cat4 - Consumer Electronics">
+        <option value="Sony">Sony</option>
+        <option value="Panasonic">Panasonic</option>
+        <option value="LG">LG</option>
+        <option value="Samsung">Samsung</option>
+        <option value="Other">Other</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <!-- Numeric Features -->
+  {% for feature in [
+    'Device_Age', 'Material_Recovery_Rate', 'Year_of_Manufacture',
+    'Market_Value_of_Metals', 'Cost_of_Recovery', 'Gold_(g)', 'Aluminum_(g)',
+    'Silver_(g)', 'Carbon_(g)', 'Platinum_(g)', 'Rhodium_(g)', 'Nickel_(g)',
+    'Tin_(g)', 'Lithium_(g)'
+  ] %}
+    <div class="form-group">
+      <label>{{ feature.replace('_', ' ') }}</label>
+      <input type="number" step="any" name="{{ feature }}" class="form-control" required>
+    </div>
+  {% endfor %}
+
+  <button type="submit" class="btn btn-primary mt-3">Predict</button>
+</form>
+
+{% if predictions %}
+<hr>
+<h4>📈 Prediction Results</h4>
+<ul>
+  {% for key, value in predictions.items() %}
+    <li><strong>{{ key }}:</strong> {{ value }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

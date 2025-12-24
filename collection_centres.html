@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>📍 E-Waste Collection Centres</h2>
+<p>Browse official and private e-waste collection centres in Nashik, Pune, and nearby areas.</p>
+
+<!-- 🔍 Search and Filter -->
+<div class="row mb-3">
+  <div class="col-md-6">
+    <input type="text" id="searchInput" class="form-control" placeholder="🔍 Search by provider or address...">
+  </div>
+  <div class="col-md-4">
+    <select id="cityFilter" class="form-select">
+      <option value="">🌐 Filter by City</option>
+      {% for city in centres|map(attribute='city')|unique %}
+      <option value="{{ city }}">{{ city }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+<!-- 🗺 Collection Centre Table -->
+<div class="table-responsive">
+<table class="table table-bordered table-hover" id="centresTable">
+  <thead class="table-dark">
+    <tr>
+      <th>City</th>
+      <th>Provider</th>
+      <th>Type</th>
+      <th>Service Mode</th>
+      <th>Address</th>
+      <th>Map</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for c in centres %}
+    <tr>
+      <td>{{ c.city }}</td>
+      <td>{{ c.provider }}</td>
+      <td>{{ c.type }}</td>
+      <td>{{ c.mode }}</td>
+      <td>{{ c.address }}</td>
+      <td>
+        <iframe
+          src="https://www.google.com/maps?q={{ c.address | urlencode }}&output=embed"
+          width="250"
+          height="150"
+          style="border:0;"
+          allowfullscreen=""
+          loading="lazy"
+        ></iframe>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<a href="{{ url_for('dashboard') }}" class="btn btn-secondary mt-3">← Back to Dashboard</a>
+
+<!-- 🔧 JS for Search/Filter -->
+<script>
+  const searchInput = document.getElementById('searchInput');
+  const cityFilter = document.getElementById('cityFilter');
+  const tableRows = document.querySelectorAll('#centresTable tbody tr');
+
+  function filterTable() {
+    const searchText = searchInput.value.toLowerCase();
+    const selectedCity = cityFilter.value;
+
+    tableRows.forEach(row => {
+      const city = row.children[0].textContent.toLowerCase();
+      const provider = row.children[1].textContent.toLowerCase();
+      const address = row.children[4].textContent.toLowerCase();
+      const matchSearch = provider.includes(searchText) || address.includes(searchText);
+      const matchCity = !selectedCity || city === selectedCity.toLowerCase();
+
+      row.style.display = matchSearch && matchCity ? '' : 'none';
+    });
+  }
+
+  searchInput.addEventListener('input', filterTable);
+  cityFilter.addEventListener('change', filterTable);
+</script>
+
+{% endblock %}

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}E-Waste Management{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Google Fonts (Optional) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+    <style>
+      body {
+          font-family: 'Roboto', sans-serif;
+          background-color: #f4fdf5; /* Light green background */
+      }
+
+      .navbar {
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar-brand {
+          font-weight: bold;
+      }
+
+      .nav-link:hover {
+          background-color: #e0f7ea;
+          border-radius: 5px;
+      }
+
+      .navbar-text {
+          font-weight: 500;
+          padding-left: 10px;
+      }
+
+      .container {
+          background: #ffffff;
+          padding: 20px;
+          border-radius: 12px;
+          box-shadow: 0 2px 10px rgba(0, 128, 0, 0.1);
+      }
+
+      #flash-container .alert {
+          animation: slideIn 0.5s ease-in-out;
+      }
+
+      @keyframes slideIn {
+          from { transform: translateY(-20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+      }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-success bg-gradient">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+     <img src="{{ url_for('static', filename='images/LOgo.jpg') }}" alt="Logo" style="height: 32px; margin-right: 8px;">
+     <span>E-Waste Portal</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      {% set active_page = request.endpoint %}
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {% if 'user_id' in session %}
+        
+<!-- Chatbot Floating Button -->
+<div id="chatbot-widget">
+  <div id="chatbot-toggle" onclick="toggleChatbot()">
+    <img src="{{ url_for('static', filename='images/Chatbot_logo.jpg') }}"
+      alt="Bot Logo"
+      style="height: 100%; width: 100%; object-fit: cover;">
+  </div>
+
+  <!-- Delayed Popup Message -->
+  <div id="chat-popup" class="chat-popup">May I help you?</div>
+
+  <div id="chatbox" class="card shadow">
+    <div class="card-header bg-success text-white p-2 d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <img src="{{ url_for('static', filename='images/Chatbot_logo.jpg') }}" alt="Bot Logo" style="height: 30px; width: 30px; margin-right: 10px; border-radius: 50%; background-color: white;">
+        <strong>Trash2Tech</strong>
+      </div>
+      <span style="cursor: pointer;" onclick="toggleChatbot()">✖</span>
+    </div>
+
+    <div class="card-body p-2" id="chat-messages" style="height: 200px; overflow-y: auto; font-size: 14px;">
+      <div class="text-muted">Welcome Sir/Madam</div>
+    </div>
+    <div class="card-footer p-2">
+      <form id="chat-form">
+        <input type="text" id="user-message" class="form-control form-control-sm" placeholder="Type your message..." required>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Chat CSS -->
+<style>
+  #chatbot-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+  }
+
+  #chatbot-toggle {
+    width: 50px;
+    height: 50px;
+    background-color: #28a745;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    overflow: hidden;
+    padding: 0;
+  }
+
+  #chatbox {
+    display: none;
+    width: 280px;
+    border-radius: 10px;
+  }
+
+  #chat-messages div {
+    margin: 5px 0;
+  }
+
+  /* Delayed popup message style */
+  .chat-popup {
+    display: none;
+    position: absolute;
+    bottom: 60px;
+    right: 0;
+    background-color: #28a745;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 13px;
+    white-space: nowrap;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<!-- Chatbot JS -->
+<script>
+  function toggleChatbot() {
+    const box = document.getElementById('chatbox');
+    const popup = document.getElementById('chat-popup');
+    box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
+    popup.style.display = 'none'; // hide popup if chat opened
+  }
+
+  document.getElementById('chat-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const input = document.getElementById('user-message');
+    const msg = input.value.trim();
+    if (msg !== "") {
+      const chat = document.getElementById('chat-messages');
+      chat.innerHTML += `<div><strong>You:</strong> ${msg}</div>`;
+
+      let lower = msg.toLowerCase();
+      let reply = "Hmm, I’m not sure how to answer that yet — but I'm learning every day! 😊 You can contact with Management. Thanks 🙏";
+
+      // E-Waste Chatbot Logic
+      if (lower.includes("hi") || lower.includes("hello"))
+        reply = "Hi! 👋 How can I help you regarding e-waste?";
+      else if (lower.includes("e-waste"))
+        reply = "E-waste is discarded electrical or electronic devices such as phones, computers, and TVs.";
+      else if (lower.includes("harmful"))
+        reply = "E-waste contains toxic materials like lead and mercury that can harm the environment and health.";
+      else if (lower.includes("dispose") || lower.includes("dispose e-waste"))
+        reply = "You should take e-waste to certified recycling centers or drop-off points.";
+      else if (lower.includes("throw"))
+        reply = "No, e-waste should not be thrown in regular garbage. Use authorized recyclers.";
+      else if (lower.includes("recycle"))
+        reply = "Recycling helps recover valuable metals and reduces environmental harm.";
+      else if (lower.includes("center") || lower.includes("recycling center"))
+        reply = "You can find recycling centers via our dashboard or contact local authorities.";
+      else if (lower.includes("portal"))
+        reply = "Our portal helps you register e-waste, track its journey, and find collection centers.";
+      else if (lower.includes("track"))
+        reply = "Login and go to the dashboard to view your e-waste status.";
+      else if (lower.includes("register"))
+        reply = "Click on Register and fill in your details to get started.";
+      else if (lower.includes("recycled"))
+        reply = "Recycled e-waste is processed to extract reusable materials like copper, gold, and plastics.";
+      else if (lower.includes("hazards") || lower.includes("danger of e-waste"))
+        reply = "Hazards include air/water pollution and health issues due to toxic chemicals.";
+      else if (lower.includes(" management"))
+        reply = "E-waste management involves collection, segregation, recycling, and proper disposal.";
+      else if (lower.includes("login"))
+        reply = "Click on the Login button and enter your credentials.";
+      else if (lower.includes("reset") || lower.includes("forgot password"))
+        reply = "Use the Forgot Password option on the login page. Or use the right dropdown menu to change your password.";
+      else if (lower.includes("donate "))
+        reply = "Some NGOs accept working devices for reuse. Check with local donation centers.";
+      else if (lower.includes("materials"))
+        reply = "E-waste contains valuable metals like gold, silver, copper, and palladium.";
+      else if (lower.includes("report"))
+        reply = "Use the contact form or support section to report issues.";
+      else if (lower.includes("collection"))
+        reply = "Collection drives are organized frequently. Stay updated through the portal.";
+      else if (lower.includes("laws") || lower.includes("rules"))
+        reply = "India's e-waste rules mandate producers and recyclers to manage e-waste responsibly.";
+      else if (lower.includes("responsibility"))
+        reply = "It means manufacturers are responsible for managing their products’ end-of-life disposal.";
+      else if (lower.includes("location"))
+        reply = "Please check the dashboard or map to find the nearest collection center.";
+      else if (lower.includes("types"))
+        reply = "Examples include mobile phones, batteries, TVs, ACs, computers, and printers.";
+      else if (lower.includes("facts"))
+        reply = "Over 50 million tons of e-waste is generated globally every year!";
+      else if (lower.includes("contact"))
+        reply = "Visit our Contact Us page or call our support number for assistance.";
+      else if (lower.includes("volunteer"))
+        reply = "You can sign up for volunteering via the portal’s Volunteer section.";
+      else if (lower.includes("generated"))
+        reply = "India generated over 3.2 million metric tons of e-waste in 2020, and it's growing!";
+      else if (lower.includes("map"))
+        reply = "E-waste collection how many collection of e-waste on which location is available on the analytics.";
+
+      chat.innerHTML += `<div class="text-success"><strong>Bot:</strong> ${reply}</div>`;
+      chat.scrollTop = chat.scrollHeight;
+      input.value = "";
+    }
+    
+  });
+
+  setTimeout(function () {
+    const popup = document.getElementById('chat-popup');
+    if (popup) {
+      popup.style.display = 'block';
+
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        popup.style.display = 'none';
+      }, 5000); // 5 seconds
+    }
+  }, 60000); 
+</script>
+
+
+
+          <li class="nav-item">
+           <a class="nav-link {% if active_page == 'index' %}active text-primary fw-bold{% endif %}" href="{{ url_for('index') }}">
+             Home
+           </a>
+         </li>
+
+
+
+          <li class="nav-item">
+            <a class="nav-link {% if active_page == 'dashboard' %}active text-primary fw-bold{% endif %}" href="{{ url_for('dashboard') }}">
+              Dashboard
+            </a>
+          </li>
+
+          <li class="nav-item">
+           <a class="nav-link {% if active_page == 'predict' %}active text-primary fw-bold{% endif %}" href="{{ url_for('predict') }}">
+              Predict
+           </a>
+         </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if active_page == 'about' %}active text-primary fw-bold{% endif %}" href="{{ url_for('about') }}">
+              About
+            </a>
+          </li>
+
+          <li class="nav-item"> 
+            <a class="nav-link {% if active_page == 'contact' %}active text-primary fw-bold{% endif %}" href="{{ url_for('contact') }}">
+              Contact
+            </a>
+          </li>
+
+          {% if session.get('is_admin') %}
+            <li class="nav-item">
+              <a class="nav-link {% if active_page == 'admin.dashboard' %}active text-primary fw-bold{% endif %}" href="{{ url_for('admin.dashboard') }}">
+                Admin 
+              </a>
+            </li>
+
+          {% endif %}
+          
+
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link {% if active_page == 'auth.login' %}active text-primary fw-bold{% endif %}" href="{{ url_for('auth.login') }}">
+              Login
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if active_page == 'auth.register' %}active text-primary fw-bold{% endif %}" href="{{ url_for('auth.register') }}">
+              Register
+            </a>
+          </li>
+
+        {% endif %}
+      </ul>
+
+      {% if 'user_name' in session %}
+  <!-- Profile Dropdown with Tooltip -->
+<div class="dropdown ms-auto">
+  <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center"
+          type="button"
+          id="profileDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          title="{{ session['user_name'] }}"
+          style="border: none; background: none;">
+    <span class="fs-4">👤</span>
+  </button>
+
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+    <li><h6 class="dropdown-header">{{ session['user_name'] }}</h6></li>
+    <li><a class="dropdown-item" href="{{ url_for('auth.update_profile') }}">Update Profile</a></li>
+    <li><a class="dropdown-item" href="{{ url_for('auth.change_password') }}">Change Password</a></li>
+    <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
+  </ul>
+</div>
+
+{% endif %}
+
+    </div>
+  </div>
+</nav>
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <!-- Flash container (floating with sound) -->
+    <div id="flash-container" style="
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 9999;
+    ">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show shadow" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Play sound once -->
+    <audio id="flash-sound" autoplay>
+      <source src="{{ url_for('static', filename='sounds/ping.mp3') }}" type="audio/mpeg">
+    </audio>
+
+    <script>
+      // Auto remove the flash message after 1 sec
+      setTimeout(function () {
+        const flashContainer = document.getElementById('flash-container');
+        if (flashContainer) {
+          flashContainer.classList.add('fade');
+          setTimeout(() => flashContainer.remove(), 300);
+        }
+      }, 2000);
+    </script>
+  {% endif %}
+{% endwith %}
+
+
+
+
+<!-- Page Content -->
+<div class="container mt-4">
+  {% block content %}
+  {% endblock %}
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+</body>
+</html>

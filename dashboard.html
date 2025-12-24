@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Welcome to Your Dashboard</h2>
+<p class="lead">Manage your e-waste records, view collection centres, and track submissions here.</p>
+
+<a href="{{ url_for('view_centres') }}" class="btn btn-info mb-4">📍 View Collection Centres</a>
+
+<!-- E-Waste Submission Form -->
+<h5>Submit New E-Waste Entry</h5>
+<div class="card mb-4">
+  <div class="card-header bg-primary text-white">Add E-Waste Entry</div>
+  <div class="card-body">
+    <form method="POST">
+      <div class="mb-3"><label class="form-label">Item Name</label><input type="text" name="item_name" class="form-control" required></div>
+      <div class="mb-3">
+        <label class="form-label">Category</label>
+        <select name="category" class="form-select" required>
+          <option value="">-- Select Category --</option>
+          <option>Mobile</option><option>Laptop</option>
+          <option>Television</option><option>Fridge</option>
+          <option>AC</option><option>Battery</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="mb-3"><label class="form-label">Condition</label><input type="text" name="condition" class="form-control" required></div>
+      <div class="mb-3"><label class="form-label">Weight (kg)</label><input type="number" step="0.01" name="weight" class="form-control" required></div>
+      <div class="mb-3"><label class="form-label">Location</label><input type="text" name="location" class="form-control" required></div>
+      <div class="mb-3"><label class="form-label">Date</label><input type="date" name="date" class="form-control" required></div>
+      <button type="submit" class="btn btn-success">Submit Entry</button>
+    </form>
+  </div>
+</div>
+
+<hr>
+
+<p class="text-muted mt-4">ℹ Click on <strong>Track</strong> to view live route to nearest collection centre.</p>
+<h5 class="mt-4">My Submitted E-Waste Records</h5>
+<div class="card card-body">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Sr. No.</th><th>Item</th><th>Category</th><th>Condition</th>
+        <th>Weight</th><th>Location</th><th>Date</th><th>Track</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for idx, item in my_data_enum %}
+      <tr>
+        <td>{{ idx }}</td>
+        <td>{{ item['item_name'] }}</td>
+        <td>{{ item['category'] }}</td>
+        <td>{{ item['condition'] }}</td>
+        <td>{{ item['weight'] }}</td>
+        <td>{{ item['location'] }}</td>
+        <td>{{ item['date'] }}</td>
+        <td>
+          <button class="btn btn-sm btn-primary" onclick="trackWaste({{ item['id'] }})">Track</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Tracking Modal -->
+<div class="modal fade" id="trackModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Tracking System</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="map" style="width: 100%; height: 450px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Google Maps API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+<script>
+let map, directionsService, directionsRenderer;
+
+function initMap() {
+  directionsService = new google.maps.DirectionsService();
+  directionsRenderer = new google.maps.DirectionsRenderer();
+  map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 6,
+    center: { lat: 20.5937, lng: 78.9629 } // India center
+  });
+  directionsRenderer.setMap(map);
+}
+
+function trackWaste(id) {
+  fetch(`/track/${id}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
+      var modal = new bootstrap.Modal(document.getElementById('trackModal'));
+      modal.show();
+
+      directionsService.route(
+        {
+          origin: data.user_address,
+          destination: data.centre_address,
+          travelMode: google.maps.TravelMode.DRIVING,
+        },
+        (response, status) => {
+          if (status === "OK") {
+            directionsRenderer.setDirections(response);
+          } else {
+            alert("Route request failed: " + status);
+          }
+        }
+      );
+    });
+}
+
+window.onload = initMap;
+</script>
+{% endblock %}

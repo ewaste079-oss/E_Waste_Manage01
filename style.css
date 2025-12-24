@@ -1,0 +1,195 @@
+/* ==== GLOBAL STYLES ==== */
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(-45deg, #dee1dd, #c4cdc1, #99aead, #6d9197, #658b6f, #2f575d, #28363d);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  min-height: 100vh;
+  color: #222;
+  scroll-behavior: smooth;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.container {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 128, 0, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+/* ==== FLASH ANIMATION ==== */
+#flash-container .alert {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.nav-link.active {
+  border-bottom: 2px solid #0ead55;
+}
+
+/* ==== BUTTON STYLES ==== */
+.animated-btn {
+  display: inline-block;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+  background: linear-gradient(135deg, #28a745, #218838);
+  border: none;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.animated-btn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #218838, #1e7e34);
+  box-shadow: 0 10px 25px rgba(33, 136, 56, 0.4);
+}
+
+/* ==== GALLERY SCROLLING ==== */
+.scrolling-gallery {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 128, 0, 0.1);
+  background-color: #f7fff7;
+}
+
+.gallery-track {
+  display: flex;
+  width: max-content;
+  animation: scroll 30s linear infinite;
+}
+
+.gallery-track img {
+  height: 200px;
+  margin: 0 10px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+.gallery-track img:hover {
+  transform: scale(1.05);
+}
+
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ==== FLOATING ICONS ==== */
+.icon-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.icon-bg img {
+  position: absolute;
+  width: 40px;
+  opacity: 0.1;
+  animation: floatIcons 30s linear infinite;
+}
+
+@keyframes floatIcons {
+  from {
+    transform: translateY(100vh) rotate(0deg);
+  }
+  to {
+    transform: translateY(-10vh) rotate(360deg);
+  }
+}
+
+/* ==== MODERN CARD DESIGN ==== */
+.card-shadow {
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  transition: 0.3s ease;
+  padding: 25px;
+  background: #ffffffcc;
+  backdrop-filter: blur(10px);
+}
+
+.card-shadow:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 128, 0, 0.2);
+}
+
+/* ==== CHATBOT FLOAT BUTTON ==== */
+#chatbot-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #28a745;
+  color: white;
+  padding: 14px 16px;
+  border-radius: 50%;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 999;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+}
+
+#chatbot-btn:hover {
+  background: #218838;
+  transform: scale(1.05);
+}
+
+/* Smooth Page Transition Effects */
+.fade-page {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+body.fade-in {
+  opacity: 1 !important;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.scrolling-gallery {
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+}
+
+.gallery-track {
+  display: inline-block;
+  animation: scrollGallery 30s linear infinite;
+}
+
+.gallery-track img {
+  height: 160px;
+  margin: 0 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+@keyframes scrollGallery {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}

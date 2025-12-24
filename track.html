@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Tracking System</h2>
+<p>
+  Item: <strong>{{ waste['item_name'] }}</strong><br>
+  Category: <strong>{{ waste['category'] }}</strong><br>
+  Condition: <strong>{{ waste['condition'] }}</strong><br>
+  Weight: <strong>{{ waste['weight'] }}</strong><br>
+  Location: <strong>{{ waste['location'] }}</strong><br>
+  Date: <strong>{{ waste['date'] }}</strong>
+</p>
+
+<div id="map" style="height:500px; width:100%;"></div>
+
+<script src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4886584.936667595!2d68.17664565459505!3d22.35111478731406!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30635ff06b94e2b5%3A0x4f42f1f1a7b93f89!2sIndia!5e0!3m2!1sen!2sin!4v1660213655805!5m2!1sen!2sin" ></script>
+<script>
+function initMap() {
+    const geocoder = new google.maps.Geocoder();
+
+    // User Location (from DB)
+    const userAddress = "{{ waste['location'] }}";
+
+    geocoder.geocode({ address: userAddress }, function(results, status) {
+        if (status === 'OK') {
+            const userLoc = results[0].geometry.location;
+
+            // Centres from backend
+            const centres = {{ centres|tojson }};
+            let nearest = null;
+            let nearestLoc = null;
+            let bestDistance = Infinity;
+            let processed = 0;
+
+            centres.forEach(function(c) {
+                geocoder.geocode({ address: c.address }, function(res, st) {
+                    processed++;
+                    if (st === 'OK') {
+                        const loc = res[0].geometry.location;
+                        const dist = google.maps.geometry.spherical.computeDistanceBetween(userLoc, loc);
+                        if (dist < bestDistance) {
+                            bestDistance = dist;
+                            nearest = c;
+                            nearestLoc = loc;
+                        }
+                    }
+
+                    if (processed === centres.length && nearestLoc) {
+                        let map = new google.maps.Map(document.getElementById("map"), {
+                            zoom: 10,
+                            center: userLoc
+                        });
+
+                        new google.maps.Marker({ position: userLoc, map: map, title: "Your Location" });
+                        new google.maps.Marker({ position: nearestLoc, map: map, title: nearest.provider });
+
+                        let directionsService = new google.maps.DirectionsService();
+                        let directionsRenderer = new google.maps.DirectionsRenderer();
+                        directionsRenderer.setMap(map);
+
+                        directionsService.route({
+                            origin: userLoc,
+                            destination: nearestLoc,
+                            travelMode: google.maps.TravelMode.DRIVING
+                        }, function(result, status) {
+                            if (status === 'OK') {
+                                directionsRenderer.setDirections(result);
+                            }
+                        });
+                    }
+                });
+            });
+        } else {
+            alert("Could not find location: " + status);
+        }
+    });
+}
+
+window.onload = initMap;
+</script>
+{% endblock %}

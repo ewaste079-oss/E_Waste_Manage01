@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Admin Dashboard</h2>
+
+<h4>👤 Admin Details</h4>
+<p><strong>Name:</strong> {{ admin_name }}</p>
+<p><strong>📧 Email:</strong> {{ admin_email }}</p>
+
+<hr>
+
+<h4 class="mt-4">👥 Registered Users</h4>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>ID</th><th>Name</th><th>Email</th><th>Action</th><th>Report</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+      <tr>
+        <td>{{ user['id'] }}</td>
+        <td>{{ user['name'] }}</td>
+        <td>{{ user['email'] }}</td>
+        <td>
+          <a href="{{ url_for('admin.delete_user', id=user['id']) }}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+        <td>
+          <a href="{{ url_for('admin.report_user', id=user['id']) }}" class="btn btn-sm btn-warning">Report</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+<hr>
+
+<h4>📦 E-Waste Records</h4>
+<a href="{{ url_for('admin.download_excel') }}" class="btn btn-success btn-sm mb-2">Download Excel</a>
+<a href="{{ url_for('admin.download_csv') }}" class="btn btn-primary btn-sm mb-2">Download CSV</a>
+
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>ID</th><th>User ID</th><th>Item Name</th><th>Category</th><th>Weight (kg)</th><th>Location</th><th>Date</th><th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in waste %}
+      <tr>
+        <td>{{ item['id'] }}</td>
+        <td>{{ item['user_id'] }}</td>
+        <td>{{ item['item_name'] }}</td>
+        <td>{{ item['category'] }}</td>
+        <td>{{ item['weight'] }}</td>
+        <td>{{ item['location'] }}</td>
+        <td>{{ item['date'] }}</td>
+        <td>
+          <a href="{{ url_for('admin.delete_waste', id=item['id']) }}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
